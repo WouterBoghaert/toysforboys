@@ -2,7 +2,7 @@
 	<entity>
 		<entity-name>be.vdab.entities.Product</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>306</entity-height>
+		<entity-height>286</entity-height>
 		<entity-X-Coordinate>640</entity-X-Coordinate>
 		<entity-Y-Coordinate>0</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
@@ -35,7 +35,7 @@
 	<entity>
 		<entity-name>be.vdab.entities.Order</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>286</entity-height>
+		<entity-height>266</entity-height>
 		<entity-X-Coordinate>292</entity-X-Coordinate>
 		<entity-Y-Coordinate>10</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
@@ -57,7 +57,7 @@
 	<entity>
 		<entity-name>be.vdab.valueobjects.OrderDetail</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>90</entity-height>
+		<entity-height>148</entity-height>
 		<entity-X-Coordinate>470</entity-X-Coordinate>
 		<entity-Y-Coordinate>30</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>

@@ -4,16 +4,31 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import be.vdab.entities.Order;
+import be.vdab.entities.Product;
 
 @Embeddable
 public class OrderDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int quantityOrdered;
 	private BigDecimal priceEach;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name="orderId")
+	private Order order;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name="productId")
+	private Product product;
 	
-	public OrderDetail(int quantityOrdered, BigDecimal priceEach) {
+	public OrderDetail(int quantityOrdered, BigDecimal priceEach, 
+			Order order, Product product) {
 		this.quantityOrdered = quantityOrdered;
 		this.priceEach = priceEach;
+		this.order = order;
+		this.product = product;
 	}
 	
 	protected OrderDetail() {}
@@ -24,6 +39,14 @@ public class OrderDetail implements Serializable {
 
 	public BigDecimal getPriceEach() {
 		return priceEach;
+	}
+	
+	public Order getOrder() {
+		return order;
+	}
+	
+	public Product getProduct() {
+		return product;
 	}
 	
 	public BigDecimal getValue() {

@@ -1,6 +1,7 @@
 package be.vdab.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -19,6 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.persistence.Table;
 
 import be.vdab.enums.Status;
@@ -26,8 +30,16 @@ import be.vdab.valueobjects.OrderDetail;
 
 @Entity
 @Table(name="orders")
+@NamedEntityGraphs ({
+	@NamedEntityGraph(name=Order.MET_CUSTOMER,
+		attributeNodes = @NamedAttributeNode("customer")),
+	@NamedEntityGraph(name=Order.MET_PRODUCTEN,
+		attributeNodes = @NamedAttributeNode("products"))
+})
 public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
+	public static final String MET_CUSTOMER = "Order.metCustomer";
+	public static final String MET_PRODUCTEN = "Order.metProducten";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -45,12 +57,12 @@ public class Order implements Serializable {
 	@CollectionTable(name = "orderdetails",
 		joinColumns = @JoinColumn(name="orderId"))
 	private Set<OrderDetail> orderDetails;
-	@ManyToMany
-	@JoinTable(
-		name="orderdetails",
-		joinColumns = @JoinColumn (name="orderId"),
-		inverseJoinColumns = @JoinColumn(name="productId"))
-	private Set<Product> products;
+//	@ManyToMany
+//	@JoinTable(
+//		name="orderdetails",
+//		joinColumns = @JoinColumn (name="orderId"),
+//		inverseJoinColumns = @JoinColumn(name="productId"))
+//	private Set<Product> products;
 
 	public Order (LocalDate orderDate, LocalDate requiredDate, Customer customer, 
 			Status status, int version) {
@@ -60,7 +72,7 @@ public class Order implements Serializable {
 			this.status = status;
 			this.version = version;
 			orderDetails = new LinkedHashSet<>();
-			products = new LinkedHashSet<>();
+//			products = new LinkedHashSet<>();
 		}
 	
 	public Order (LocalDate orderDate, LocalDate requiredDate, LocalDate shippedDate,
@@ -107,10 +119,10 @@ public class Order implements Serializable {
 	public Set<OrderDetail> getOrderDetails() {
 		return Collections.unmodifiableSet(orderDetails);
 	}
-	
-	public Set<Product> getProducts() {
-		return Collections.unmodifiableSet(products);
-	}
+//	
+//	public Set<Product> getProducts() {
+//		return Collections.unmodifiableSet(products);
+//	}
 	
 	public void setShippedDate(LocalDate shippedDate) {
 		this.shippedDate = shippedDate;
@@ -118,6 +130,11 @@ public class Order implements Serializable {
 	
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	
+	public BigDecimal getTotalValue() {
+		return orderDetails.stream().map(detail -> detail.getValue()).
+			reduce(BigDecimal.ZERO, (vorigeSom, value) -> vorigeSom.add(value));
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -41,8 +40,8 @@ public class Product implements Serializable {
 	@CollectionTable(name = "orderdetails",
 		joinColumns = @JoinColumn(name="productId"))
 	private Set<OrderDetail> orderDetails;
-	@ManyToMany(mappedBy = "products")
-	private Set<Order> orders;
+//	@ManyToMany(mappedBy = "products")
+//	private Set<Order> orders;
 	
 	public Product () {}
 	
@@ -56,7 +55,7 @@ public class Product implements Serializable {
 		this.productLine = productLine;
 		this.version = version;
 		orderDetails = new LinkedHashSet<>();
-		orders = new LinkedHashSet<>();
+//		orders = new LinkedHashSet<>();
 	}
 	
 	public Product(String name, String scale, String description, int quantityInStock, 
@@ -104,10 +103,10 @@ public class Product implements Serializable {
 	public Set<OrderDetail> getOrderDetails() {
 		return Collections.unmodifiableSet(orderDetails);
 	}
-	
-	public Set<Order> getOrders() {
-		return Collections.unmodifiableSet(orders);
-	}
+//	
+//	public Set<Order> getOrders() {
+//		return Collections.unmodifiableSet(orders);
+//	}
 	
 	public boolean verlaagQuantities(int quantityOrdered) {
 		if (quantityInOrder - quantityOrdered >=0 && quantityInStock - quantityOrdered >=0 ) {
