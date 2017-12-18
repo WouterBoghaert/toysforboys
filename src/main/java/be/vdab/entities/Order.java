@@ -16,6 +16,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -43,17 +45,29 @@ public class Order implements Serializable {
 	@CollectionTable(name = "orderdetails",
 		joinColumns = @JoinColumn(name="orderId"))
 	private Set<OrderDetail> orderDetails;
+	@ManyToMany
+	@JoinTable(
+		name="orderdetails",
+		joinColumns = @JoinColumn (name="orderId"),
+		inverseJoinColumns = @JoinColumn(name="productId"))
+	private Set<Product> products;
+
+	public Order (LocalDate orderDate, LocalDate requiredDate, Customer customer, 
+			Status status, int version) {
+			this.orderDate = orderDate;
+			this.requiredDate = requiredDate;
+			this.customer = customer;
+			this.status = status;
+			this.version = version;
+			orderDetails = new LinkedHashSet<>();
+			products = new LinkedHashSet<>();
+		}
 	
 	public Order (LocalDate orderDate, LocalDate requiredDate, LocalDate shippedDate,
 		String comments, Customer customer, Status status, int version) {
-		this.orderDate = orderDate;
-		this.requiredDate = requiredDate;
+		this(orderDate, requiredDate, customer, status, version);
 		this.shippedDate = shippedDate;
-		this.comments = comments;
-		this.customer = customer;
-		this.status = status;
-		this.version = version;
-		orderDetails = new LinkedHashSet<>();
+		this.comments = comments;		
 	}
 	
 	protected Order() {}
@@ -92,6 +106,10 @@ public class Order implements Serializable {
 	
 	public Set<OrderDetail> getOrderDetails() {
 		return Collections.unmodifiableSet(orderDetails);
+	}
+	
+	public Set<Product> getProducts() {
+		return Collections.unmodifiableSet(products);
 	}
 	
 	public void setShippedDate(LocalDate shippedDate) {
@@ -137,7 +155,5 @@ public class Order implements Serializable {
 		} else if (!requiredDate.equals(other.requiredDate))
 			return false;
 		return true;
-	}
-
-	
+	}	
 }
