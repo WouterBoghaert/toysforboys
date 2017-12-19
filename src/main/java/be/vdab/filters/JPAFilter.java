@@ -20,9 +20,11 @@ public class JPAFilter implements Filter {
 	private static final ThreadLocal<EntityManager> entityManagers
 		= new ThreadLocal<>();
 
+	@Override
 	public void init(FilterConfig fConfig) throws ServletException {
 	}	
 
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		entityManagers.set(entityManagerFactory.createEntityManager());
 		try {
@@ -39,6 +41,7 @@ public class JPAFilter implements Filter {
 		return entityManagers.get();
 	}
 
+	@Override
 	public void destroy() {
 		entityManagerFactory.close();
 	}

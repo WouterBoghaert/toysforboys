@@ -2,12 +2,7 @@ package be.vdab.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import be.vdab.valueobjects.OrderDetail;
 
 @Entity
 @Table(name = "products")
@@ -36,10 +29,10 @@ public class Product implements Serializable {
 	@JoinColumn(name = "productlineId")
 	private ProductLine productLine;
 	private int version;
-	@ElementCollection
-	@CollectionTable(name = "orderdetails",
-		joinColumns = @JoinColumn(name="productId"))
-	private Set<OrderDetail> orderDetails;
+//	@ElementCollection
+//	@CollectionTable(name = "orderdetails",
+//		joinColumns = @JoinColumn(name="productId"))
+//	private Set<OrderDetail> orderDetails;
 //	@ManyToMany(mappedBy = "products")
 //	private Set<Order> orders;
 	
@@ -54,7 +47,7 @@ public class Product implements Serializable {
 		this.buyPrice = buyPrice;
 		this.productLine = productLine;
 		this.version = version;
-		orderDetails = new LinkedHashSet<>();
+//		orderDetails = new LinkedHashSet<>();
 //		orders = new LinkedHashSet<>();
 	}
 	
@@ -100,9 +93,9 @@ public class Product implements Serializable {
 		return version;
 	}
 
-	public Set<OrderDetail> getOrderDetails() {
-		return Collections.unmodifiableSet(orderDetails);
-	}
+//	public Set<OrderDetail> getOrderDetails() {
+//		return Collections.unmodifiableSet(orderDetails);
+//	}
 //	
 //	public Set<Order> getOrders() {
 //		return Collections.unmodifiableSet(orders);

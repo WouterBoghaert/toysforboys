@@ -13,7 +13,6 @@ import be.vdab.entities.Order;
 import be.vdab.enums.Status;
 import be.vdab.exceptions.RecordAangepastException;
 import be.vdab.repositories.OrderRepository;
-import be.vdab.valueobjects.OrderDetail;
 
 public class OrderService extends AbstractService {
 	private final OrderRepository orderRepository = new OrderRepository();
@@ -33,13 +32,13 @@ public class OrderService extends AbstractService {
 			try {
 				boolean rollback = false;
 				beginTransaction();
-				for (OrderDetail orderDetail : order.getOrderDetails()) {
-					if (!orderDetail.getProduct().verlaagQuantities(orderDetail.getQuantityOrdered())) {
-						rollback = true;
-						failedIds.add(order.getId());
-						break;
-					}				
-				}
+//				for (OrderDetail orderDetail : order.getOrderDetails()) {
+//					if (!orderDetail.getProduct().verlaagQuantities(orderDetail.getQuantityOrdered())) {
+//						rollback = true;
+//						failedIds.add(order.getId());
+//						break;
+//					}				
+//				}
 				if(rollback) {
 					rollback();
 				}

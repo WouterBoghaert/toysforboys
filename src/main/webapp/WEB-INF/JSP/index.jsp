@@ -6,6 +6,22 @@
 <html lang="nl">
 	<head>
 		<vdab:head title="Unshipped orders"/>
+		<style>
+			.id {
+				text-align: right;
+				width: 2em;
+			}
+			.datum {
+				text-align: right;
+				width: 5em;
+			}
+			.status {
+				width: 7em;
+			}
+			.customer {
+				width: 8em;
+			}
+		</style>
 	</head>
 	<body>
 		<vdab:menu/>
@@ -35,27 +51,27 @@
 					<tbody>
 						<c:forEach items="${unshippedOrders}" var="order">
 							<tr>
-								<td>
-									<c:url value="/detail.htm" var="detailURL">
+								<td class="id">
+									<c:url value="/orders/detail.htm" var="detailURL">
 										<c:param name="id" value="${order.id}"/>
 									</c:url>
 									<a href="${detailURL}" title="${order.id}">${order.id}</a>
 								</td>
-								<td>
+								<td class="datum">
 								<fmt:parseDate value="${order.orderDate}" pattern="yyyy-MM-dd"
 									var="orderDate" type="date"/>
 									<fmt:formatDate value="${orderDate}" type="date" 
 									dateStyle="short" pattern="d-M-yy"/>
 								</td>
-								<td>
+								<td class="datum">
 								<fmt:parseDate value="${order.requiredDate}" pattern="yyyy-MM-dd"
 									var="requiredDate" type="date"/>
 									<fmt:formatDate value="${requiredDate}" type="date" 
 									dateStyle="short" pattern="d-M-yy"/>
 								</td>
-								<td>order.customer.name</td>
-								<td>order.comments</td>
-								<td>
+								<td class="customer">${order.customer.name}</td>
+								<td>${order.comments}</td>
+								<td class="status">
 									<img src="<c:url value="/images/${order.status}.png"/>" alt="${order.status.status}"
 									title="${order.status.status}">${order.status.status}
 								</td>
@@ -87,5 +103,10 @@
 			Er zijn geen onverscheepte orders op dit moment.
 			</c:otherwise>
 		</c:choose>
+		<script>
+			document.getElementById("setShippedForm").addEventListener("submit", function() {
+				document.getElementById("setShippedKnop").disabled = true;
+			});
+		</script>
 	</body>
 </html>
