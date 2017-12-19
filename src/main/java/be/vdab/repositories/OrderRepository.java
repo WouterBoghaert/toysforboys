@@ -23,8 +23,9 @@ public class OrderRepository extends AbstractRepository {
 	public List<Order> findByIdIn(List<Long> ids) {
 		return getEntityManager()
 			.createNamedQuery("Order.findByIdIn", Order.class)
+			.setParameter("ids", ids)
 			.setHint("javax.persistence.loadgraph", 
-				getEntityManager().createEntityGraph(Order.MET_PRODUCTEN))
+				getEntityManager().createEntityGraph(Order.MET_ORDERDETAILS))
 			.getResultList();
 	}
 }

@@ -17,8 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
@@ -33,13 +31,13 @@ import be.vdab.valueobjects.OrderDetail;
 @NamedEntityGraphs ({
 	@NamedEntityGraph(name=Order.MET_CUSTOMER,
 		attributeNodes = @NamedAttributeNode("customer")),
-	@NamedEntityGraph(name=Order.MET_PRODUCTEN,
-		attributeNodes = @NamedAttributeNode("products"))
+	@NamedEntityGraph(name=Order.MET_ORDERDETAILS,
+		attributeNodes = @NamedAttributeNode(value = "orderDetails"))
 })
 public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String MET_CUSTOMER = "Order.metCustomer";
-	public static final String MET_PRODUCTEN = "Order.metProducten";
+	public static final String MET_ORDERDETAILS = "Order.metOrderdetails";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

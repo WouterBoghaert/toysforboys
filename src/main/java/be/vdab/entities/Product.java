@@ -109,7 +109,7 @@ public class Product implements Serializable {
 //	}
 	
 	public boolean verlaagQuantities(int quantityOrdered) {
-		if (quantityInOrder - quantityOrdered >=0 && quantityInStock - quantityOrdered >=0 ) {
+		if (quantityInStock - quantityOrdered >=0) {
 			quantityInOrder -=  quantityOrdered;
 			quantityInStock -=  quantityOrdered;
 			return true;
