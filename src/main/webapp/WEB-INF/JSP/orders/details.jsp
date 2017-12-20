@@ -6,32 +6,40 @@
 <html lang="nl">
 	<head>
 		<vdab:head title="Details order ${order.id}"/>
+		<style>
+			.rechts {
+				text-align: right;
+			}
+			.midden {
+				text-align: center;
+			}
+		</style>
 	</head>
 	<body>
 		<vdab:menu/>
-		<c:if test="${not empty order}">
-			<h1>Order ${order.id}</h1>
+		<c:if test="${not empty order and not empty orderKlant}">
+			<h1>Order ${orderKlant.id}</h1>
 			<dl>
 				<dt>Ordered:</dt>
-				<dd><fmt:parseDate value="${order.orderDate}" pattern="yyyy-MM-dd"
+				<dd><fmt:parseDate value="${orderKlant.orderDate}" pattern="yyyy-MM-dd"
 				var="orderDate" type="date"/>
 				<fmt:formatDate value="${orderDate}" type="date" dateStyle="short"
 				pattern="dd/MM/yy"/>
 				</dd>
 				<dt>Required:</dt>
-				<dd><fmt:parseDate value="${order.requiredDate}" pattern="yyyy-MM-dd"
+				<dd><fmt:parseDate value="${orderKlant.requiredDate}" pattern="yyyy-MM-dd"
 				var="requiredDate" type="date"/>
-				<fmt:formatDate value="${requiredrDate}" type="date" dateStyle="short"
+				<fmt:formatDate value="${requiredDate}" type="date" dateStyle="short"
 				pattern="dd/MM/yy"/>
 				</dd>
 				<dt>Customer:</dt>
-				<dd>${order.customer.name} 
-				${order.customer.adres.streetAndNumber}
-				${order.customer.adres.postalCode} ${order.customer.adres.city} ${order.customer.adres.state}
-				${order.customer.country.name}
+				<dd><c:out value="${orderKlant.customer.name}"/><br>
+				<c:out value="${orderKlant.customer.adres.streetAndNumber}"/><br>
+				${orderKlant.customer.adres.postalCode} <c:out value="${orderKlant.customer.adres.city}"/> <c:out value="${orderKlant.customer.adres.state}"/><br>
+				${orderKlant.customer.country.name}
 				</dd>
 				<dt>Comments:</dt>
-				<dd>${order.comments}</dd>				
+				<dd><c:out value="${orderKlant.comments}"/></dd>				
 				<c:if test="${not empty order.orderDetails}">
 				<dt>Details:</dt>
 				<dd>
@@ -45,26 +53,38 @@
 								<th>Devilerable</th>
 							</tr>
 						</thead>
-						<tbody>
-							<c:forEach items="${order.products}" var="product">
+						<tbody class="rechts">
+							<c:forEach items="${order.orderDetails}" var="orderDetail">
 								<tr>
-									<td>${product.name}</td>
-									<td><fmt:formatNumber value="${product.priceEach}"
+									<td><c:out value="${orderDetail.product.name}"/></td>
+									<td><fmt:formatNumber value="${orderDetail.priceEach}"
 									minFractionDigits="2" maxFractionDigits="2"/></td>
-									<td>${product.quantityOrdered}</td>
-									<td><fmt:formatNumber value="${product.getValue()}"
+									<td>${orderDetail.quantityOrdered}</td>
+									<td><fmt:formatNumber value="${orderDetail.getValue()}"
 									minFractionDigits="2" maxFractionDigits="2"/></td>
-									<td>${product.getDeliverable() ? "&check;" : "&cross;"}</td> 
+									<td class="midden">${orderDetail.isDeliverable() ? "&check;" : "&cross;"}</td> 
 								</tr>								
 							</c:forEach>
 						</tbody>
 					</table>
 				</dd>
 				<dt>Value:</dt>
-				<dd>${order.getTotalValue()}</dd>
+				<dd><fmt:formatNumber value="${order.getTotalValue()}"
+				minFractionDigits="2" maxFractionDigits="2"/></dd>
+				</c:if>
+				<c:if test="${empty order.orderDetails}">
+					Er zijn geen details beschikbaar voor dit order.
 				</c:if>			
 			</dl>
 		</c:if>
+		<c:if test="${empty order and not empty param}">
+			<p>Het gevraagde order is niet gevonden in de database.</p>
+		</c:if>
+		<c:if test="${empty order and empty param}">
+			<p>Er is iets misgegaan. Probeer opnieuw het detail van uw order te bekijken
+			vanuit de Unshipped orders pagina. Contacteer de helpdesk indien dit niet lukt.</p>
+		</c:if>
 	</body>
 </html>
-<!--  herschrijven met juiste associaties!!! orderdetails gebruiken -->
+<!--  herschrijven met juiste associaties!!! orderdetails gebruiken
+ook order.getTotalValue() checken en evt herschrijven -->

@@ -13,6 +13,7 @@ import be.vdab.entities.Order;
 import be.vdab.enums.Status;
 import be.vdab.exceptions.RecordAangepastException;
 import be.vdab.repositories.OrderRepository;
+import be.vdab.valueobjects.OrderDetail;
 
 public class OrderService extends AbstractService {
 	private final OrderRepository orderRepository = new OrderRepository();
@@ -21,41 +22,49 @@ public class OrderService extends AbstractService {
 		return orderRepository.read(id);
 	}
 	
+	public Optional<Order> readWithCustomerAndCountry(long id) {
+		return orderRepository.readWithCustomerAndCountry(id);
+	}
+	
 	public List<Order> findUnshippedOrders(int vanafRij, int aantalRijen) {
 		return orderRepository.findUnshippedOrders(vanafRij, aantalRijen);
 	}
 	
 	public List<Long> setAsShipped(List<Long> ids) {
 		List<Long> failedIds = new LinkedList<>();
-		List<Order> orderLijst = orderRepository.findByIdIn(ids);				
-		for (Order order : orderLijst) {
+//		List<Order> orderLijst = orderRepository.findByIdIn(ids);				
+//		for (Order order : orderLijst) {
+		for(long id: ids) {
+			beginTransaction();
 			try {
-				boolean rollback = false;
-				beginTransaction();
-//				for (OrderDetail orderDetail : order.getOrderDetails()) {
-//					if (!orderDetail.getProduct().verlaagQuantities(orderDetail.getQuantityOrdered())) {
-//						rollback = true;
-//						failedIds.add(order.getId());
-//						break;
-//					}				
-//				}
-				if(rollback) {
-					rollback();
-				}
-				else {
-					order.setStatus(Status.SHIPPED);
-					order.setShippedDate(LocalDate.now());
-					commit();
+				boolean rollback = false;				
+				Order order = orderRepository.readWithOrderdetails(id).orElse(null);
+				if(order != null) {
+					for (OrderDetail orderDetail : order.getOrderDetails()) {
+						if (!orderDetail.getProduct().verlaagQuantities(orderDetail.getQuantityOrdered())) {
+							rollback = true;
+							failedIds.add(order.getId());
+							break;
+						}				
+					}
+					if(rollback) {
+						rollback();
+					}
+					else {
+						order.setStatus(Status.SHIPPED);
+						order.setShippedDate(LocalDate.now());
+						commit();
+					}
 				}
 			} 
 			catch (RollbackException ex) {
 				if (ex.getCause() instanceof OptimisticLockException) {
 					throw new RecordAangepastException();
 				}
-			} 
+			}
 			catch (PersistenceException ex) {
 				rollback();
-				throw ex;
+					throw ex;
 			}
 		}
 		return failedIds;

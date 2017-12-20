@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "productlines")
@@ -17,6 +18,7 @@ public class ProductLine implements Serializable {
 	private long id;
 	private String name;
 	private String description;
+	@Version
 	private int version;
 	
 	public ProductLine(String name, int version) {

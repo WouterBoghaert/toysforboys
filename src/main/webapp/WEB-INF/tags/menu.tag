@@ -2,6 +2,6 @@
 <%@taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 <nav>
 	<ul>
-		<li><a href="#">Unshipped orders</a></li>
+		<li><a href="<c:url value="/"/>">Unshipped orders</a></li>
 	</ul>
 </nav>

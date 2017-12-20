@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import be.vdab.valueobjects.Adres;
 
@@ -27,6 +28,7 @@ public class Customer implements Serializable {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name="countryId")
 	private Country country;
+	@Version
 	private int version;
 	
 	public Customer(String name, Adres adres, Country country, int version) {

@@ -25,21 +25,10 @@ public class IndexServlet extends HttpServlet {
  
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getParameterValues("id") != null) {
-			request.setAttribute("failedIds", request.getParameterValues("id"));
+		if(request.getParameterValues("fId") != null) {
+			request.setAttribute("failedIds", request.getParameterValues("fId"));
 		}
-		int vanafRij = request.getParameter("vanafRij") == null ? 0 :
-			Integer.parseInt(request.getParameter("vanafRij"));
-		request.setAttribute("vanafRij", vanafRij);
-		request.setAttribute("aantalRijen", AANTAL_RIJEN);
-		List<Order> unshippedOrders = orderService.findUnshippedOrders(vanafRij, AANTAL_RIJEN + 1);
-		if(unshippedOrders.size() <= AANTAL_RIJEN) {
-			request.setAttribute("laatstePagina", true);
-		}
-		else {
-			unshippedOrders.remove(AANTAL_RIJEN);
-		}
-		request.setAttribute("unshippedOrders", unshippedOrders);
+		getUnshippedOrders(request,response);
 		request.getRequestDispatcher(VIEW).forward(request, response);
 	}
 	
@@ -52,16 +41,32 @@ public class IndexServlet extends HttpServlet {
 			try {
 				List<Long> failedIds = orderService.setAsShipped(ids);
 				StringBuilder redirectBuilder = new StringBuilder();
-				redirectBuilder.append(request.getRequestURI() + "?");
-				failedIds.stream().forEach(id -> redirectBuilder.append("id=" + id + "&"));
+				redirectBuilder.append(request.getContextPath() +"?");
+				failedIds.stream().forEach(id -> redirectBuilder.append("fId=" + id + "&"));
 				redirectBuilder.deleteCharAt(redirectBuilder.length()-1);
 				response.sendRedirect(response.encodeRedirectURL(redirectBuilder.toString()));
 			}
 			catch(RecordAangepastException ex) {
 				request.setAttribute("fouten", Collections.singletonMap("setAsShipped",
 					"Een andere gebruiker heeft de records aangepast!"));
+				getUnshippedOrders(request,response);
 				request.getRequestDispatcher(VIEW).forward(request, response);
 			}
 		}
+	}
+	
+	private void getUnshippedOrders(HttpServletRequest request, HttpServletResponse response) {
+		int vanafRij = request.getParameter("vanafRij") == null ? 0 :
+			Integer.parseInt(request.getParameter("vanafRij"));
+		request.setAttribute("vanafRij", vanafRij);
+		request.setAttribute("aantalRijen", AANTAL_RIJEN);
+		List<Order> unshippedOrders = orderService.findUnshippedOrders(vanafRij, AANTAL_RIJEN + 1);
+		if(unshippedOrders.size() <= AANTAL_RIJEN) {
+			request.setAttribute("laatstePagina", true);
+		}
+		else {
+			unshippedOrders.remove(AANTAL_RIJEN);
+		}
+		request.setAttribute("unshippedOrders", unshippedOrders);
 	}
 }

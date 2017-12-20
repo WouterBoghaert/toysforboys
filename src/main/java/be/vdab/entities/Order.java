@@ -1,8 +1,14 @@
 package be.vdab.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,21 +21,33 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import be.vdab.enums.Status;
+import be.vdab.valueobjects.OrderDetail;
 
 @Entity
 @Table(name="orders")
 @NamedEntityGraphs ({
 	@NamedEntityGraph(name=Order.MET_CUSTOMER,
 		attributeNodes = @NamedAttributeNode("customer")),
-/*	@NamedEntityGraph(name=Order.MET_ORDERDETAILS,
-		attributeNodes = @NamedAttributeNode(value = "orderDetails"))*/
+	@NamedEntityGraph(name=Order.MET_CUSTOMER_EN_LAND,
+		attributeNodes = @NamedAttributeNode(value="customer",
+			subgraph = "metLand"),
+		subgraphs = @NamedSubgraph(name="metLand",
+			attributeNodes = @NamedAttributeNode("country"))), 
+	@NamedEntityGraph(name=Order.MET_ORDERDETAILS,
+		attributeNodes = @NamedAttributeNode("orderDetails"))
+//			subgraph= "metProduct"),
+//		subgraphs = @NamedSubgraph(name="metProduct",
+//			attributeNodes = @NamedAttributeNode("product")))
 })
 public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String MET_CUSTOMER = "Order.metCustomer";
+	public static final String MET_CUSTOMER_EN_LAND = "Order.metCustomerEnLand";
 	public static final String MET_ORDERDETAILS = "Order.metOrderdetails";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,17 +61,12 @@ public class Order implements Serializable {
 	private Customer customer;
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	@Version
 	private int version;
-//	@ElementCollection
-//	@CollectionTable(name = "orderdetails",
-//		joinColumns = @JoinColumn(name="orderId"))
-//	private Set<OrderDetail> orderDetails;
-//	@ManyToMany
-//	@JoinTable(
-//		name="orderdetails",
-//		joinColumns = @JoinColumn (name="orderId"),
-//		inverseJoinColumns = @JoinColumn(name="productId"))
-//	private Set<Product> products;
+	@ElementCollection
+	@CollectionTable(name = "orderdetails",
+		joinColumns = @JoinColumn(name="orderId"))
+	private Set<OrderDetail> orderDetails;
 
 	public Order (LocalDate orderDate, LocalDate requiredDate, Customer customer, 
 			Status status, int version) {
@@ -62,8 +75,7 @@ public class Order implements Serializable {
 			this.customer = customer;
 			this.status = status;
 			this.version = version;
-//			orderDetails = new LinkedHashSet<>();
-//			products = new LinkedHashSet<>();
+			orderDetails = new LinkedHashSet<>();
 		}
 	
 	public Order (LocalDate orderDate, LocalDate requiredDate, LocalDate shippedDate,
@@ -107,13 +119,9 @@ public class Order implements Serializable {
 		return version;
 	}
 	
-//	public Set<OrderDetail> getOrderDetails() {
-//		return Collections.unmodifiableSet(orderDetails);
-//	}
-//	
-//	public Set<Product> getProducts() {
-//		return Collections.unmodifiableSet(products);
-//	}
+	public Set<OrderDetail> getOrderDetails() {
+		return Collections.unmodifiableSet(orderDetails);
+	}
 	
 	public void setShippedDate(LocalDate shippedDate) {
 		this.shippedDate = shippedDate;
@@ -123,10 +131,10 @@ public class Order implements Serializable {
 		this.status = status;
 	}
 	
-//	public BigDecimal getTotalValue() {
-//		return orderDetails.stream().map(detail -> detail.getValue()).
-//			reduce(BigDecimal.ZERO, (vorigeSom, value) -> vorigeSom.add(value));
-//	}
+	public BigDecimal getTotalValue() {
+		return orderDetails.stream().map(detail -> detail.getValue()).
+			reduce(BigDecimal.ZERO, (vorigeSom, value) -> vorigeSom.add(value));
+	}
 
 	@Override
 	public int hashCode() {

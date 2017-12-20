@@ -22,6 +22,8 @@ public class DetailServlet extends HttpServlet {
 		String idString = request.getParameter("id");
 		if(StringUtils.isNotNullNotEmpty(idString)) {
 			if(StringUtils.isLong(idString)) {
+				orderService.readWithCustomerAndCountry(Long.parseLong(idString))
+					.ifPresent(order -> request.setAttribute("orderKlant", order));
 				orderService.read(Long.parseLong(idString)).ifPresent(order ->
 					request.setAttribute("order", order));
 			}

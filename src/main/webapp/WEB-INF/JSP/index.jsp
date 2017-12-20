@@ -52,7 +52,7 @@
 						<c:forEach items="${unshippedOrders}" var="order">
 							<tr>
 								<td class="id">
-									<c:url value="/orders/detail.htm" var="detailURL">
+									<c:url value="/orders/details.htm" var="detailURL">
 										<c:param name="id" value="${order.id}"/>
 									</c:url>
 									<a href="${detailURL}" title="${order.id}">${order.id}</a>
@@ -69,14 +69,14 @@
 									<fmt:formatDate value="${requiredDate}" type="date" 
 									dateStyle="short" pattern="d-M-yy"/>
 								</td>
-								<td class="customer">${order.customer.name}</td>
-								<td>${order.comments}</td>
+								<td class="customer"><c:out value="${order.customer.name}"/></td>
+								<td><c:out value="${order.comments}"/></td>
 								<td class="status">
 									<img src="<c:url value="/images/${order.status}.png"/>" alt="${order.status.status}"
 									title="${order.status.status}">${order.status.status}
 								</td>
 								<td>
-									<input type="checkbox" name="id" value="${order.id}">
+									<input type="checkbox" name="id" value="${order.id}"> 
 								</td>
 							</tr>
 						</c:forEach>
@@ -96,7 +96,8 @@
 					<a href="<c:out value="${volgendePaginaURL}"/>" title="volgende pagina"
 					 class="pagineren">&rarr;</a>
 				</c:if>
-				<input type="submit" value="Set as shipped" id="setShippedKnop">
+				<label><span>${fouten.setAsShipped}</span></label>
+				<input type="submit" value="Set as shipped" id="setShippedKnop">				
 			</form>
 			</c:when>
 			<c:otherwise>
@@ -110,3 +111,4 @@
 		</script>
 	</body>
 </html>
+

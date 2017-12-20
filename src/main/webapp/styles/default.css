@@ -1,6 +1,7 @@
 body {
 	background-color: #FFEC9F;
 	font-family: sans-serif;
+	padding: 1em;
 }
 
 nav {
@@ -147,13 +148,15 @@ a:hover {
 	text-decoration: underline;
 }
 
-dt {
-	float: left;
-	width: 15em;
-}
+/* dt { */
+/* 	float: left; */
+/* 	width: 15em; */
+/* } */
 
 dd {
-	margin-left: 15em;
+/* 	margin-left: 15em; */
+	margin-left: 0;
+	margin-bottom: 0.5em;
 	font-weight: bold;
 }
 
